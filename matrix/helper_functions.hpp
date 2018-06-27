@@ -32,8 +32,9 @@ template<typename Type>
 Type wrap(Type x, Type low, Type high) {
     Type range = high - low;
     x = fmod(x - low, range);
-    if (x < 0)
+    if (x < 0) {
         x += range;
+    }
     return x + low;
 }
 
