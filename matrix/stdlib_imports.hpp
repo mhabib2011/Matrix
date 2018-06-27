@@ -13,6 +13,14 @@
 #include <cstdlib>
 #include <cinttypes>
 
+#ifndef M_PI
+#define M_PI	3.14159265358979323846
+#endif
+#ifndef M_TWOPI
+#define M_TWOPI	(M_PI * 2.0)
+#endif
+
+
 namespace matrix {
 
 #if defined(__PX4_NUTTX)
