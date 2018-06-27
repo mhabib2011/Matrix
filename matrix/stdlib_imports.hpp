@@ -56,6 +56,7 @@ MATRIX_NUTTX_WRAP_MATH_FUN_UNARY(floor)
 
 MATRIX_NUTTX_WRAP_MATH_FUN_BINARY(pow)
 MATRIX_NUTTX_WRAP_MATH_FUN_BINARY(atan2)
+MATRIX_NUTTX_WRAP_MATH_FUN_BINARY(fmod)
 
 #else       // Not NuttX, using the C++ standard library
 
