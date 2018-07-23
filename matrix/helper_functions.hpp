@@ -30,7 +30,28 @@ bool is_finite(Type x) {
  */
 template<typename Type>
 Type wrap(Type x, Type low, Type high) {
+    // already in range
+    if (low < x && x < high) {
+        return x;
+    }
+
+    // close to range
     Type range = high - low;
+    if ((high <= x) && (x < high + (range*10))) {
+        while (high <= x) {
+            x -= range;
+        }
+        return x;
+    }
+
+    if ((low - (range*10) <= x) && (x < low)) {
+        while (x < low) {
+            x += range;
+        }
+        return x;
+    }
+
+    // cover the whole domain of the function
     x = fmod(x - low, range);
     if (x < 0) {
         x += range;

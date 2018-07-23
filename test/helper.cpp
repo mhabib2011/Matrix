@@ -9,6 +9,8 @@ int main()
     TEST(fabs(wrap(4.0, 0.0, 1.0)) < 1e-5);
     TEST(fabs(wrap(-4.0, 0.0, 10.0) - 6.0) < 1e-5);
     TEST(fabs(wrap(-18.0, 0.0, 10.0) - 2.0) < 1e-5);
+    TEST(fabs(wrap(-1.5, 3.0, 5.0) - 4.5) < 1e-5);
+    TEST(fabs(wrap(15.5, 3.0, 5.0) - 3.5) < 1e-5);
     TEST(fabs(wrap(-1.0, 30.0, 40.0) - 39.0) < 1e-5);
     TEST(fabs(wrap(-8000.0, -555.0, 1.0) - (-216.0)) < 1e-5);
 
