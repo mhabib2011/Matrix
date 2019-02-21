@@ -192,12 +192,12 @@ public:
      */
     Quaternion(const Vector3<Type> &src, const Vector3<Type> &dst, const Type eps = Type(1e-5))
     {
-        Quaternion &q = *this;
-        Vector3<Type> cr = src.cross(dst);
-        float dt = src.dot(dst);
-        /* If the two vectors are parallel, cross product is zero
-         * If they point opposite, the dot product is negative */
-        if (cr.norm() < eps && dt < 0) {
+        // output 
+        Quaternion &q = *this; 
+        Vector3<Type> cr;
+
+        // we need to handle the special case of parallel opposite vectors.
+        if ((src.cross(dst)).norm() < eps && (src.dot(dst) < 0) ) {
             cr = src.abs();
             if (cr(0) < cr(1)) {
                 if (cr(0) < cr(2)) {
@@ -214,13 +214,34 @@ public:
             }
             q(0) = Type(0);
             cr = src.cross(cr);
-        } else {
-            /* Half-Way Quaternion Solution */
-            q(0) = src.dot(dst) + sqrt(src.norm_squared() * dst.norm_squared());
-        }
-        q(1) = cr(0);
+        } else
+        {
+            // we are using the half way solution
+            Vector3<Type> u = src;
+            Vector3<Type> v = dst;
+            // we need to normilize, before finding the half way vector
+            // only normalize if the norm is not 0
+            if (u.norm()>0)
+            {
+                u.normalize();
+            }
+            if (v.norm()>0)
+            {
+                v.normalize();
+            }
+            Vector3<Type> half = u + v;
+            if (half.norm()>0)
+            {
+                half.normalize();
+            }
+            cr = u.cross(half);
+            q(0) = u.dot(half);
+        }       
+
+        q(1) = cr(0); 
         q(2) = cr(1);
         q(3) = cr(2);
+
         q.normalize();
     }
 
