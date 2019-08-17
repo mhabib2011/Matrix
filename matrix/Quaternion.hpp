@@ -137,7 +137,10 @@ public:
      *
      * This sets the instance to a quaternion representing coordinate transformation from
      * frame 2 to frame 1 where the rotation from frame 1 to frame 2 is described
-     * by a 3-2-1 intrinsic Tait-Bryan rotation sequence.
+     * by a 3-2-1 intrinsic Tait-Bryan rotation sequence
+     * 
+     * we should not be based the autopilot on euler, because of gimbal lock
+     * but in the cases where the euler angle are known, then we could rely on euler
      *
      * @param euler euler angle instance
      */
@@ -150,15 +153,34 @@ public:
         Type sinPhi_2 = Type(sin(euler.phi() / Type(2.0)));
         Type sinTheta_2 = Type(sin(euler.theta() / Type(2.0)));
         Type sinPsi_2 = Type(sin(euler.psi() / Type(2.0)));
-        q(0) = cosPhi_2 * cosTheta_2 * cosPsi_2 +
+
+        // tailsiter in fw mode, we have 3(roll), 2(pitch), 3(yaw)
+        if (Type(fabs(euler.theta() + Type(M_PI/2))) < Type(0.4))
+        {
+            q(0) = cosPhi_2 * cosTheta_2 * cosPsi_2 -
+                   sinPhi_2 * cosTheta_2 * sinPsi_2;
+            q(1) = sinPhi_2 * sinTheta_2 * cosPsi_2 -
+                   cosPhi_2 * sinTheta_2 * sinPsi_2;
+            q(2) = cosPhi_2 * sinTheta_2 * cosPsi_2 +
+                   sinPhi_2 * sinTheta_2 * sinPsi_2;
+            q(3) = sinPhi_2 * cosTheta_2 * cosPsi_2 +
+                   cosPhi_2 * cosTheta_2 * sinPsi_2;
+            printf ("          **************\n");
+            printf ("          ************** EULER TO QUAT TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
+            printf ("          **************\n");
+        } else
+        {
+            q(0) = cosPhi_2 * cosTheta_2 * cosPsi_2 +
                sinPhi_2 * sinTheta_2 * sinPsi_2;
-        q(1) = sinPhi_2 * cosTheta_2 * cosPsi_2 -
+            q(1) = sinPhi_2 * cosTheta_2 * cosPsi_2 -
                cosPhi_2 * sinTheta_2 * sinPsi_2;
-        q(2) = cosPhi_2 * sinTheta_2 * cosPsi_2 +
+            q(2) = cosPhi_2 * sinTheta_2 * cosPsi_2 +
                sinPhi_2 * cosTheta_2 * sinPsi_2;
-        q(3) = cosPhi_2 * cosTheta_2 * sinPsi_2 -
+            q(3) = cosPhi_2 * cosTheta_2 * sinPsi_2 -
                sinPhi_2 * sinTheta_2 * cosPsi_2;
+        }
     }
+
 
     /**
      * Quaternion from AxisAngle

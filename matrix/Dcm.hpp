@@ -111,6 +111,8 @@ public:
      * This sets the transformation matrix from frame 2 to frame 1 where the rotation
      * from frame 1 to frame 2 is described by a 3-2-1 intrinsic Tait-Bryan rotation sequence.
      *
+     * we should not be based the autopilot on euler, because of gimbal lock
+     * but in the cases where the euler angle are known, then we could rely on euler
      *
      * @param euler euler angle instance
      */
@@ -124,6 +126,26 @@ public:
         Type cosPsi = Type(cos(euler.psi()));
         Type sinPsi = Type(sin(euler.psi()));
 
+    // tailsiter in fw mode, we have 3(roll), 2(pitch), 3(yaw)
+    if (Type(fabs(euler.theta() + Type(M_PI/2))) < Type(0.4))
+    {
+        dcm(0, 0) = cosPsi * cosThe * cosPhi - sinPsi * sinPhi;
+        dcm(0, 1) = -cosPsi * cosThe * sinPhi - sinPsi * cosPhi;
+        dcm(0, 2) = cosPsi * sinThe;
+
+        dcm(1, 0) = sinPsi * cosThe * cosPhi + cosPsi * sinPhi;
+        dcm(1, 1) = -sinPsi * cosThe * cosPhi + cosPsi * cosPhi;
+        dcm(1, 2) = sinPsi * sinThe;
+
+        dcm(2, 0) = -sinThe * cosPhi;
+        dcm(2, 1) = sinThe * sinPhi;
+        dcm(2, 2) = cosThe;
+        printf ("          **************\n");
+        printf ("          ************** EULER TO DCM TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
+        printf ("          **************\n");
+        
+    } else
+    {
         dcm(0, 0) = cosThe * cosPsi;
         dcm(0, 1) = -cosPhi * sinPsi + sinPhi * sinThe * cosPsi;
         dcm(0, 2) = sinPhi * sinPsi + cosPhi * sinThe * cosPsi;
@@ -135,6 +157,7 @@ public:
         dcm(2, 0) = -sinThe;
         dcm(2, 1) = sinPhi * cosThe;
         dcm(2, 2) = cosPhi * cosThe;
+    }
     }
 
 

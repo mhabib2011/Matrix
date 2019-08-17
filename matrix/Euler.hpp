@@ -90,6 +90,10 @@ public:
      * frame 2 to frame 1.
      * This instance will hold the angles defining the 3-2-1 intrinsic
      * Tait-Bryan rotation sequence from frame 1 to frame 2.
+     * 
+     * we should not be based the autopilot on euler, because of gimbal lock
+     * but we can still use euler for logging and cases that are well studied
+     *
      *
      * @param dcm Direction cosine matrix
     */
@@ -100,13 +104,32 @@ public:
         Type psi_val = Type(atan2(dcm(1, 0), dcm(0, 0)));
         Type pi = Type(M_PI);
 
+        Type theta_val_fw = Type(-acos(dcm(2,2))); 
+
         if (Type(fabs(theta_val - pi / Type(2))) < Type(1.0e-3)) {
             phi_val = Type(0.0);
             psi_val = Type(atan2(dcm(1, 2), dcm(0, 2)));
 
-        } else if (Type(fabs(theta_val + pi / Type(2))) < Type(1.0e-3)) {
-            phi_val = Type(0.0);
-            psi_val = Type(atan2(-dcm(1, 2), -dcm(0, 2)));
+        // The vehicle is a tailsitter in FW with max pitch is 15deg, 
+        // we are using here 23deg to decide weather we are in FW mode 
+        } else if (Type(fabs(theta_val_fw + pi/2)) < Type(0.4)) 
+        {
+            // The tailsitter is FW, so the transformation is based on 3,2,3 rotation. 
+            // First we are MC and we yaw around z(3), then we pitch down around y(2). 
+            // Now we are fw, then we roll around z(3).
+            // 3,2,3 dcm
+            // cPsi*cTheta*cPhi-sPsi*sPhi -cPsi*cTheta*sPhi-sPsi*cPhi cPsi*sTheta
+            // sPsi*cTheta*cPhi+cPsi*sPhi -sPsi*cTheta*cPhi+cPsi*cPhi sPsi*sTheta
+            // -sTheta*cPhi sTheta*sPhi cTheta
+            // then we can reconstruct the Euler angels from the dcm
+            theta_val = Type(-acos(dcm(2,2)));
+            // theta_val will never be 0 zero given the condition of the if statement above
+            phi_val = Type(asin(dcm(2, 1)/sin(theta_val)));
+            psi_val = Type(asin(dcm(1, 2)/sin(theta_val)));
+
+            printf ("          **************\n");
+            printf ("          ************** DCM TO EULER TRANSFORMATION FOR TFW %f %f %f ***************\n", double(phi_val), double(theta_val), double(psi_val));
+            printf ("          **************\n");
         }
 
         phi() = phi_val;
