@@ -105,8 +105,10 @@ public:
         Type pi = Type(M_PI);
 
         Type theta_val_fw = Type(-acos(dcm(2,2))); 
+        // printf ("          ************** DCM TO EULER theta_val_fw %f %f %f ***************\n", double(theta_val_fw));
 
-        if (Type(fabs(theta_val - pi / Type(2))) < Type(1.0e-3)) {
+
+        if (Type(fabs(theta_val_fw - pi/2)) < Type(1.0e-3)) {
             phi_val = Type(0.0);
             psi_val = Type(atan2(dcm(1, 2), dcm(0, 2)));
 
@@ -127,9 +129,9 @@ public:
             phi_val = Type(asin(dcm(2, 1)/sin(theta_val)));
             psi_val = Type(asin(dcm(1, 2)/sin(theta_val)));
 
-            printf ("          **************\n");
-            printf ("          ************** DCM TO EULER TRANSFORMATION FOR TFW %f %f %f ***************\n", double(phi_val), double(theta_val), double(psi_val));
-            printf ("          **************\n");
+        //     printf ("          **************\n");
+        //     printf ("          ************** DCM TO EULER TRANSFORMATION FOR TFW %f %f %f ***************\n", double(phi_val), double(theta_val), double(psi_val));
+        //     printf ("          **************\n");
         }
 
         phi() = phi_val;

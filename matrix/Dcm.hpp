@@ -140,9 +140,9 @@ public:
         dcm(2, 0) = -sinThe * cosPhi;
         dcm(2, 1) = sinThe * sinPhi;
         dcm(2, 2) = cosThe;
-        printf ("          **************\n");
-        printf ("          ************** EULER TO DCM TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
-        printf ("          **************\n");
+        // printf ("          **************\n");
+        // printf ("          ************** EULER TO DCM TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
+        // printf ("          **************\n");
         
     } else
     {
