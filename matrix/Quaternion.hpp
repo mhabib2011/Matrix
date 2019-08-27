@@ -165,9 +165,9 @@ public:
                    sinPhi_2 * sinTheta_2 * sinPsi_2;
             q(3) = sinPhi_2 * cosTheta_2 * cosPsi_2 +
                    cosPhi_2 * cosTheta_2 * sinPsi_2;
-            // printf ("          **************\n");
-            // printf ("          ************** EULER TO QUAT TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
-            // printf ("          **************\n");
+            printf ("          **************\n");
+            printf ("          ************** EULER TO QUAT TRANSFORMATION FOR TFW %f %f %f *************** \n", double(euler.phi()), double(euler.theta()), double(euler.psi()));
+            printf ("          **************\n");
         } else
         {
             q(0) = cosPhi_2 * cosTheta_2 * cosPsi_2 +
